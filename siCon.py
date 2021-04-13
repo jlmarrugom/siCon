@@ -53,7 +53,7 @@ else:
 def v(t):
     return vac if (t>=dia) else 0.0   #Tasa de vacunación
 #&(t<dia+1+vac/100)
-t_max = st.sidebar.number_input('Tiempo Máximo de Simulación',min_value=10,value=400,step=10)
+t_max = st.sidebar.number_input('Tiempo Máximo de Simulación',min_value=10,value=200,step=10)
 
 # st.write('Parametros: ','\u03C3:',str(sigma),'\u03B3:',str(gamma),'\u03B2:',str(beta(0)),'\u03BE:',str(xi),'\u03BC',str(mu),'\u03BD',str(v(0)))
 S0, E0, A0, I0, H0, G0, R0, V0, FV0, D0 = N-1 , 1, 0, 0, 0, 0, 0, 0, 0, 0  # initial conditions: one exposed
