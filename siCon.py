@@ -42,7 +42,7 @@ def beta(t):
 
 if st.sidebar.checkbox('¿Hay vacunación?'):
     vac = st.sidebar.number_input('Tasa de Vacunación \u03BD',min_value=0.0,max_value=1.0, value=5*(10e-3))
-    dia = st.sidebar.number_input('Día de Vacunación',1,None,10,1)
+    dia = st.sidebar.number_input('Día de Vacunación',1,None,100,1)
     q = st.sidebar.number_input('Eficacia q',min_value=0.0,max_value=1.0,value=0.5)
     w = st.sidebar.number_input('Adhesión a la campaña w',min_value=0.0,max_value=1.0,value=0.5)
 else:
@@ -97,7 +97,7 @@ population['Total'] = S+E+A+I+H+G+R+V+FV+D
 which = st.sidebar.multiselect('Datos para visualizar:',['Susceptibles','Expuestos','Asintomáticos','Infectados',
 'Hospitalizados','Graves','Recuperados','Vacunados','No Generan Inmunidad','Fallecidos',
 'Incidencia','Tiempo de Inmunidad','Total de Casos','Total de Muertes por Covid-19',
-'Total de Vacunados','Total'],default=['Total','Recuperados','Fallecidos','Infectados','Expuestos'])
+'Total de Vacunados','Total'],default=['Total','Recuperados','Fallecidos','Asintomáticos','Infectados','Expuestos'])
 if st.selectbox('Tipo de Gráfico',('Linea','Area'))=='Area':
     st.area_chart(population[which])
 
