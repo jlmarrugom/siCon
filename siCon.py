@@ -107,12 +107,13 @@ population['Recuperados'] = R
 population['Vacunados'] = V
 population['No Generan Inmunidad'] = FV
 population['Fallecidos'] = D
-if st.sidebar.checkbox('¿Cambios a la incidencia? ()+/N'):
-    
-    population['Incidencia'] = beta_0*(S+FV)*(pe*E+pa*A+pi*I+ph*H+pg*G)/N #de casos nuevos
-elif st.sidebar.checkbox('¿Cambios a la incidencia? /N'):
-    population['Incidencia'] = beta_0*S+FV*(pe*E+pa*A+pi*I+ph*H+pg*G)/N #de casos nuevos
+if st.sidebar.checkbox('¿Cambios a la incidencia?'):
+    if st.sidebar.checkbox('() + /N'):
+        population['Incidencia'] = beta_0*(S+FV)*(pe*E+pa*A+pi*I+ph*H+pg*G)/N #de casos nuevos
 
+    elif st.sidebar.checkbox('/N'):
+        population['Incidencia'] = beta_0*S+FV*(pe*E+pa*A+pi*I+ph*H+pg*G)/N #de casos nuevos
+    
 else:
     population['Incidencia'] = beta_0*S+FV*(pe*E+pa*A+pi*I+ph*H+pg*G) #de casos nuevos
 
