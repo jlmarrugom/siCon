@@ -7,23 +7,44 @@ import matplotlib.pyplot as plt
 #st.set_page_config(layout="wide")
 st.set_page_config(page_title='SiConApp',page_icon=':100:')
 st.title('Simulador de Pandemias :earth_americas:')
-@st.cache
-def deriv(y, t, N, beta, alfaa, alfag, alfah, alfai, deltaa, deltai, gammaa, gammai, gammah, gammag, sigmah, sigmag, pe, pa, pi, ph, pg, w, mu, v, lamda, q):
-    #Ecuaciones del cambio para solucionar
-    S, E, A, I, H, G, R, V, FV, D = y
-    dSdt = (-beta(t) * S * (pe*E+pa*A+pi*I+ph*H+pg*G) / N) -(v(t)*w*S) +lamda -(mu*S) #v(t)*S vacunados en tiempo t, solo vacunación sobre susceptibles es efectiva
-    dEdt = (beta(t) * (S+FV) * (pe*E+pa*A+pi*I+ph*H+pg*G) / N) - ((deltaa+deltai+mu) * E)
-    dAdt = deltaa*E - (gammaa+alfaa+mu)*A
-    dIdt = deltai * E - (sigmah +sigmag+gammai+alfai+mu)*I
-    dHdt = sigmah*I - (gammah+alfah+mu)*H#*mu # el mu hace que crezca mucho
-    dGdt = sigmag*I - (gammag+alfag+mu)*G
-    dRdt = gammaa*A + gammai * I + gammah*H + gammag*G - mu*R
-    dVdt = v(t)*q*w*S- mu*V #las vacunaciones tienen una componente temporal
-    dFVdt= v(t)*(1-q)*w*S - (beta(t)/N)*FV*(pe*E+pa*A+pi*I+ph*H+pg*G) - mu*FV #comp temporal
-    N = S+E+A+I+H+G+R+V+FV
-    dDdt = mu * N
 
-    return dSdt, dEdt, dAdt, dIdt, dHdt, dGdt, dRdt, dVdt, dFVdt, dDdt
+if st.sidebar.checkbox('¿Incluir H*\u03BC?'):
+    @st.cache
+    def deriv(y, t, N, beta, alfaa, alfag, alfah, alfai, deltaa, deltai, gammaa, gammai, gammah, gammag, sigmah, sigmag, pe, pa, pi, ph, pg, w, mu, v, lamda, q):
+        #Ecuaciones del cambio para solucionar
+        S, E, A, I, H, G, R, V, FV, D = y
+        dSdt = (-beta(t) * S * (pe*E+pa*A+pi*I+ph*H+pg*G) / N) -(v(t)*w*S) +lamda -(mu*S) #v(t)*S vacunados en tiempo t, solo vacunación sobre susceptibles es efectiva
+        dEdt = (beta(t) * (S+FV) * (pe*E+pa*A+pi*I+ph*H+pg*G) / N) - ((deltaa+deltai+mu) * E)
+        dAdt = deltaa*E - (gammaa+alfaa+mu)*A
+        dIdt = deltai * E - (sigmah +sigmag+gammai+alfai+mu)*I
+        dHdt = sigmah*I - (gammah+alfah+mu)*H*mu # el mu hace que crezca mucho
+        dGdt = sigmag*I - (gammag+alfag+mu)*G
+        dRdt = gammaa*A + gammai * I + gammah*H + gammag*G - mu*R
+        dVdt = v(t)*q*w*S- mu*V #las vacunaciones tienen una componente temporal
+        dFVdt= v(t)*(1-q)*w*S - (beta(t)/N)*FV*(pe*E+pa*A+pi*I+ph*H+pg*G) - mu*FV #comp temporal
+        N = S+E+A+I+H+G+R+V+FV
+        dDdt = mu * N
+
+        return dSdt, dEdt, dAdt, dIdt, dHdt, dGdt, dRdt, dVdt, dFVdt, dDdt
+
+else:
+    @st.cache
+    def deriv(y, t, N, beta, alfaa, alfag, alfah, alfai, deltaa, deltai, gammaa, gammai, gammah, gammag, sigmah, sigmag, pe, pa, pi, ph, pg, w, mu, v, lamda, q):
+        #Ecuaciones del cambio para solucionar
+        S, E, A, I, H, G, R, V, FV, D = y
+        dSdt = (-beta(t) * S * (pe*E+pa*A+pi*I+ph*H+pg*G) / N) -(v(t)*w*S) +lamda -(mu*S) #v(t)*S vacunados en tiempo t, solo vacunación sobre susceptibles es efectiva
+        dEdt = (beta(t) * (S+FV) * (pe*E+pa*A+pi*I+ph*H+pg*G) / N) - ((deltaa+deltai+mu) * E)
+        dAdt = deltaa*E - (gammaa+alfaa+mu)*A
+        dIdt = deltai * E - (sigmah +sigmag+gammai+alfai+mu)*I
+        dHdt = sigmah*I - (gammah+alfah+mu)*H#*mu # el mu hace que crezca mucho
+        dGdt = sigmag*I - (gammag+alfag+mu)*G
+        dRdt = gammaa*A + gammai * I + gammah*H + gammag*G - mu*R
+        dVdt = v(t)*q*w*S- mu*V #las vacunaciones tienen una componente temporal
+        dFVdt= v(t)*(1-q)*w*S - (beta(t)/N)*FV*(pe*E+pa*A+pi*I+ph*H+pg*G) - mu*FV #comp temporal
+        N = S+E+A+I+H+G+R+V+FV
+        dDdt = mu * N
+
+        return dSdt, dEdt, dAdt, dIdt, dHdt, dGdt, dRdt, dVdt, dFVdt, dDdt
 
 #La sidebar NO se actualiza cada vez que recarga el archivo!!!
 N = st.sidebar.number_input('Población Total',min_value=1_000,max_value=100_000_000,value=1_000_000,step=1_000)
@@ -86,7 +107,12 @@ population['Recuperados'] = R
 population['Vacunados'] = V
 population['No Generan Inmunidad'] = FV
 population['Fallecidos'] = D
-population['Incidencia'] = beta_0*S+FV*(pe*E+pa*A+pi*I+ph*H+pg*G) #de casos nuevos
+if st.sidebar.checkbox('¿Cambios a la incidencia? ()+/N'):
+    population['Incidencia'] = beta_0*(S+FV)*(pe*E+pa*A+pi*I+ph*H+pg*G)/N #de casos nuevos
+
+else:
+    population['Incidencia'] = beta_0*S+FV*(pe*E+pa*A+pi*I+ph*H+pg*G) #de casos nuevos
+
 population['Total de Casos'] = (beta_0 * (S+FV) * (pe*E+pa*A+pi*I+ph*H+pg*G) / N).sum()
 population['Total de Muertes por Covid-19'] = (alfaa*A+alfai*I+alfah*H+alfag*G).sum()
 population['Total de Vacunados'] = (np.asarray([v(i) for i in t])*w*S).sum()
