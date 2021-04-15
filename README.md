@@ -1,5 +1,5 @@
 # siCon
-Simulación con las ecuaciones y parámetros de ControlBox
+Sometimes, you know that something isn't right, and program a solution.
 
 Puedes ver el despliegue [aquí](https://share.streamlit.io/jlmarrugom/sicon/main/siCon.py)
 
